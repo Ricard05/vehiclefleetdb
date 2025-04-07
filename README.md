@@ -128,6 +128,38 @@ sistemas obsoletos. Esto puede generar problemas como:
 
 ---
 
+## ✨ Características Clave del Sistema
+
+- 📁 **Gestión Integral**: Control total de vehículos, conductores, rutas, mantenimientos y auditoría.
+- 🔒 **Seguridad y Trazabilidad**: Uso de roles, permisos y auditorías mediante triggers y borrado lógico.
+- ⚙️ **Procedimientos Almacenados**: Automatización de tareas clave como el control de estados de viaje.
+- 🔁 **Triggers Personalizados**: Automatización de reglas de negocio críticas (ej. borrado en cascada lógico).
+- 📦 **Modularidad**: Estructura por carpetas para mantener el orden (audit, insert, triggers, etc.).
+
+## 📂 Estructura del Proyecto
+
+```plaintext
+📁 audit/
+    └── DB documentation
+📁 insert/
+    └── DB documentation
+📄 README.md
+🖼️ er_diagram.png
+📄 script.sql
+📄 storage_procedures.sql
+📄 triggers.sql
+```
+
+## 🧩 Requisitos de Instalación
+
+Para poner en marcha el sistema de gestión de unidades de transporte, se requieren los siguientes elementos:
+
+- **PostgreSQL** (versión 13 o superior)
+- **pgAdmin** o cualquier cliente compatible con PostgreSQL (opcional para administración visual)
+- **Extensión pgcrypto** para generación de UUIDs (ya incluida en PostgreSQL)
+- Acceso a un entorno que permita ejecutar scripts SQL
+- Editor de texto o entorno de desarrollo (como VS Code)
+
 ## ⌨️ Scripts para la creación de la base de datos
 
 ### 📄 Fragmento de script.sql
@@ -269,3 +301,4 @@ $$;
 CREATE OR REPLACE FUNCTION...
 ```
 📎 [Ver storage_procedures.sql script completo](storage_procedures.sql)
+
