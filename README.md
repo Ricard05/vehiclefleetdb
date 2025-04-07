@@ -169,6 +169,7 @@ CREATE TABLE
         is_deleted BOOLEAN DEFAULT FALSE NOT NULL -- Borrado lógico
     );
 
+CREATE TABLE ...
 ```
 
 📎 [Ver script.sql script completo](script.sql)
@@ -177,5 +178,94 @@ CREATE TABLE
 Se usa el siguiente bloque de código para crear los diferentes procedimientos almacenados que se usarán en la base de datos (Se incluyen las funciones usadas por los triggers).
 
 ```sql
--- Este es un bloque de código SQL
+CREATE OR REPLACE FUNCTION soft_delete()
+RETURNS TRIGGER AS $$
+BEGIN
+  -- Ejecuta la consulta dinámica para actualizar la tabla correcta
+  EXECUTE format('UPDATE ONLY %I SET is_deleted = TRUE WHERE id = $1', TG_TABLE_NAME) USING OLD.id;
+
+  -- Retorna el registro original sin eliminarlo
+  RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE PROCEDURE update_trip_status(
+  p_trip_id UUID,  -- ID del viaje
+  p_new_state TEXT  -- Nuevo estado para el viaje
+)
+LANGUAGE plpgsql AS $$
+DECLARE
+  v_vehicle_id UUID;
+  v_inspection_exists BOOLEAN;
+BEGIN
+  -- Verificar si el nuevo estado es válido
+  IF p_new_state NOT IN ('PENDIENTE', 'EN_CAMINO_AL_DESTINO', 'CARGA_ENTREGADA', 'EN_CAMINO_AL_ORIGEN', 'FINALIZADO') THEN
+    RAISE EXCEPTION 'Estado no válido: %', p_new_state;
+  END IF;
+
+  -- Obtener el ID del vehículo asociado al viaje
+  SELECT vehicle_id INTO v_vehicle_id
+  FROM Trip
+  WHERE id = p_trip_id AND is_deleted = FALSE;
+
+  -- Verificar si se encontró el viaje y obtener el ID del vehículo
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'No se encontró un viaje con el ID % o el viaje está marcado como eliminado', p_trip_id;
+  END IF;
+
+  -- Verificar si el viaje está en estado PENDIENTE y si se ha realizado la inspección del vehículo
+  IF p_new_state = 'EN_CAMINO_AL_DESTINO' OR p_new_state = 'EN_CAMINO_AL_ORIGEN' THEN
+    -- Verificar si se ha realizado una inspección para el vehículo
+    SELECT EXISTS (
+      SELECT 1
+      FROM VehicleInspection
+      WHERE vehicle_id = v_vehicle_id
+        AND is_deleted = FALSE
+    ) INTO v_inspection_exists;
+
+    -- Si no existe una inspección registrada, no se puede cambiar a los estados 'EN_CAMINO_AL_DESTINO' ni 'EN_CAMINO_AL_ORIGEN'
+    IF NOT v_inspection_exists THEN
+      RAISE EXCEPTION 'No se ha realizado una inspección del vehículo asociado al viaje. No se puede cambiar el estado a "%".', p_new_state;
+    END IF;
+  END IF;
+
+  -- Actualizar el estado del viaje con el ID proporcionado
+  UPDATE Trip
+  SET state = p_new_state
+  WHERE id = p_trip_id AND is_deleted = FALSE;
+
+  -- Verificar si la actualización fue exitosa
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'No se pudo actualizar el estado del viaje con el ID %', p_trip_id;
+  END IF;
+
+  -- Puedes agregar más lógica aquí, como registrar en una tabla de auditoría si lo deseas
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION soft_delete_user_when_driver_or_admin_is_deleted()
+RETURNS trigger
+LANGUAGE plpgsql
+AS $$
+BEGIN
+  -- Si se elimina un conductor, marcar el usuario como eliminado
+  IF TG_TABLE_NAME = 'driver' AND NEW.is_delete = true THEN
+    UPDATE "user"
+    SET is_delete = true
+    WHERE id = NEW.user_id;
+  END IF;
+
+  -- Si se elimina un administrador, marcar el usuario como eliminado
+  IF TG_TABLE_NAME = 'admin' AND NEW.is_delete = true THEN
+    UPDATE "user"
+    SET is_delete = true
+    WHERE id = NEW.user_id;
+  END IF;
+
+  RETURN NEW;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION...
 ```
+📎 [Ver storage_procedures.sql script completo](storage_procedures.sql)
