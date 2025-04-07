@@ -32,6 +32,7 @@ costos operativos y mejorar la planificación logística.
   - [No funcionales](#requerimientos-no-funcionales)
 - [Problemática](#problemática)
 - [Estructura del Repositorio](#estructura-del-repositorio)
+- [Análisis de Normalización](#análisis-de-normalización)
 - [Diagrama ER](#diagrama-er)
 
 ---
@@ -135,6 +136,30 @@ sistemas obsoletos. Esto puede generar problemas como:
 - ⚙️ **Procedimientos Almacenados**: Automatización de tareas clave como el control de estados de viaje.
 - 🔁 **Triggers Personalizados**: Automatización de reglas de negocio críticas (ej. borrado en cascada lógico).
 - 📦 **Modularidad**: Estructura por carpetas para mantener el orden (audit, insert, triggers, etc.).
+
+## 🧠 Análisis de Normalización
+
+### 1NF (Primera Forma Normal)
+
+- Todos los atributos contienen valores atómicos.
+- No hay listas ni valores repetidos dentro de una misma celda.
+- Todas las tablas tienen claves primarias bien definidas.
+
+### 2NF (Segunda Forma Normal)
+
+- No existen dependencias parciales en ninguna tabla.
+- Todos los atributos dependen completamente de la clave primaria.
+
+### 3NF (Tercera Forma Normal)
+
+- No existen dependencias transitivas entre atributos.
+- Todos los atributos dependen únicamente de la clave primaria.
+
+### 4NF (Cuarta Forma Normal)
+
+- No existen dependencias multivaluadas.
+- Cada conductor solo maneja un vehículo, `vehicle_id` depende directamente de `driver_id`.
+- La tabla `Trip` relaciona `driver_id`, `vehicle_id` y `route_id` sin valores repetidos.
 
 ## 📂 Estructura del Proyecto
 
