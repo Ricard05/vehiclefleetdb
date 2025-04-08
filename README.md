@@ -83,6 +83,7 @@ Para poner en marcha el sistema de gestión de unidades de transporte, se requie
     - [Fragmento de insert_admin.sql](#-fragmento-de-insert_adminsql)
     - [Fragmento de insert_cargo_type.sql](#-fragmento-de-insert_cargo_typesql)
     - [Fragmento de insert_driver.sql](#-fragmento-de-insert_driversql)
+    - [Otros scripts de inserción](#otros-scripts-de-inserción)
 - [Conclusión](#conclusión)
 
 ---
@@ -548,7 +549,7 @@ INSERT INTO "admin" ("id", "created_at", "is_deleted", "user_id") VALUES
 ```
 En este bloque de codigo se insertan los datos de los administradores en la tabla `admin`.
 
-## 📎 [Ver insert_admin.sql script completo](./insert/insert_admin.sql)
+📎 [Ver insert_admin.sql script completo](./insert/insert_admin.sql)
 
 #### 📄 Fragmento de insert_cargo_type.sql
 
@@ -567,7 +568,8 @@ INSERT INTO "cargotype" ("id", "name", "description", "created_at", "is_deleted"
 
 ```
 En este bloque de código se insertan registros en la tabla `cargotype` con diferentes valores para los campos `id`, `name`, `description`, `created_at` e `is_deleted`.
-## 📎 [Ver insert_cargo_type.sql script completo](./insert/insert_cargo_type.sql)
+
+📎 [Ver insert_cargo_type.sql script completo](./insert/insert_cargo_type.sql)
 
 #### 📄 Fragmento de insert_driver.sql
 
@@ -596,7 +598,19 @@ INSERT INTO "driver" ("id", "user_id", "first_name", "last_name", "employee_numb
 ```
 En este bloque de código se insertan registros en la tabla `driver` de la base de datos. Solo se muestran algunos de los registros como ejemplos, pero el script completo se encuentra en el archivo `insert_driver.sql`.
 
-## 📎 [Ver insert_driver.sql script completo](./insert/insert_driver.sql)
+📎 [Ver insert_driver.sql script completo](./insert/insert_driver.sql)
+
+### Otros scripts de inserción
+
+- 📎 [Ver insert_route.sql script completo](./insert/insert_route.sql)
+
+- 📎 [Ver insert_trip.sql script completo](./insert/insert_trip.sql)
+
+- 📎 [Ver insert_user.sql script completo](./insert/insert_user.sql)
+
+- 📎 [Ver insert_vehicle.sql script completo](./insert/insert_vehicle.sql)
+
+- 📎 [Ver insert_vehicle_inspection.sql script completo](./insert/insert_vehicle_inspection.sql)
 ---
 ## Conclusión
 
